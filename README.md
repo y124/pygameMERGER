@@ -1,7 +1,7 @@
 # pygameMERGER
 merge game made in pygame
 
-[windows download](xect.tk/dl/pygameMERGER.7z)
+[windows download](https://xect.tk/dl/pygameMERGER.7z)
 
 extract the file, if you can't extract .7z files you will need [7zip](https://www.7-zip.org/download.html)
 
