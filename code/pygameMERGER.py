@@ -127,20 +127,20 @@ def rgb2hex(r):
     print(f'[pygameMERGER.py] Function: rgb2hex({r})')
     return "{:02x}{:02x}{:02x}".format(r[0],r[1],r[2])
 
-def save():
+def save(n):
     print('[pygameMERGER.py] Function: save()')
     global mergeables, merges
     q = []
     for m in mergeables:
         q.append([m.val, m.pos])
     q.append(merges)
-    with open('mydata.json', 'w') as f:
+    with open(os.path.join(folder, f'mydata{n}.json'), 'w') as f:
         json.dump(q, f)
         
-def load():
+def load(n):
     global mergeables, merges
     print('[pygameMERGER.py] Function: load()')
-    f = open('mydata.json')
+    f = open(os.path.join(folder, f'mydata{n}.json'))
     qs = json.load(f)
     mergeables = []
     merges = qs[-1]
@@ -190,9 +190,21 @@ amtext = getFont(30).render(' Auto Merge Hax ', True, (0,255,127), (50,50,50))
 amtextRect = amtext.get_rect()
 amtextRect.center = (1486, 350)
 
-s2text = getFont(250).render('START', True, (0,255,255), (50,50,50))
+s1text = getFont(100).render('Save 1', True, (0,255,255), (50,50,50))
+s1textRect = s1text.get_rect()
+s1textRect.center = (400, 350)
+
+s2text = getFont(100).render('Save 2', True, (0,255,255), (50,50,50))
 s2textRect = s2text.get_rect()
-s2textRect.center = (800, 250)
+s2textRect.center = (800, 350)
+
+s3text = getFont(100).render('Save 3', True, (0,255,255), (50,50,50))
+s3textRect = s3text.get_rect()
+s3textRect.center = (1200, 350)
+
+sttext = getFont(200).render('Start', True, (127,0,127))
+sttextRect = sttext.get_rect()
+sttextRect.center = (800, 150)
 
 ntext = getFont(100).render('Merge Infinte', True, (0,192,192))
 ntextRect = ntext.get_rect()
@@ -212,11 +224,6 @@ m2textRect.center = (1460, 870)
 
 clock = pygame.time.Clock()
 
-try:
-    load()
-except:
-    save()
-
 while r:
     clock.tick(60)
     dis.fill((0,0,0))
@@ -231,7 +238,26 @@ while r:
         if event.type == pygame.MOUSEBUTTONUP:
             if scene == 'START':
                 if PIR (pygame.mouse.get_pos(), tuple(s2textRect)):
+                    try:
+                        load(2)
+                    except FileNotFoundError:
+                        save(2)
                     scene = 'MAIN'
+                    sav = 2
+                if PIR (pygame.mouse.get_pos(), tuple(s1textRect)):
+                    try:
+                        load(1)
+                    except FileNotFoundError:
+                        save(1)
+                    scene = 'MAIN'
+                    sav = 1
+                if PIR (pygame.mouse.get_pos(), tuple(s3textRect)):
+                    try:
+                        load(3)
+                    except FileNotFoundError:
+                        save(3)
+                    scene = 'MAIN'
+                    sav = 3
             
             if scene == 'MAIN' and tablet:
                 if pygame.mouse.get_pos()[0] < 900:
@@ -271,9 +297,15 @@ while r:
                                     end = True
                             
         if event.type == pygame.MOUSEBUTTONDOWN:
-        
+            try:
+                save(sav)
+            except:
+                None == None
             if event.button == 2 and scene == 'MAIN' and pygame.mouse.get_pos()[0] < 900:
-                save()
+                try:
+                    save(sav)
+                except:
+                    None == None
                 x, y = pygame.mouse.get_pos()
                 x, y = int(x*(GridSize/900)), int(y*(GridSize/900))
                 for m in mergeables:
@@ -424,8 +456,11 @@ while r:
                         images[path] = pygame.image.load(path)
                         img = images[path]
                     except:
-                        command = f'--- {int(qq/2)} {m.val+2} {folder}/{qq}_{m.val}.png {rgb2hex((25*(m.val%10+1),(25*(int(m.val/10)%10+1)),(25*(int(m.val/100)%10+1))))} '
-                        makeShape(command.split(' '))
+                        command = f'--- {int(qq/2)} {m.val+2} {folder}/{qq}_{m.val}.png {rgb2hex((25*(m.val%10+1),(25*(int(m.val/10)%10+1)),(25*(int(m.val/100)%10+1))))}'
+                        args = command.split(' ')[:3]
+                        args.append(' '.join(command.split(' ')[3:-1]))
+                        args.append(command.split(' ')[-1])
+                        makeShape(args)
                         print('[pygameMERGER.py] Command: '+command)
                         images[path] = pygame.image.load(path)
                         img = images[path]
@@ -457,7 +492,10 @@ while r:
     
     if scene == 'START':  
         dis.blit(ntext, ntextRect)
+        dis.blit(s1text, s1textRect)
         dis.blit(s2text, s2textRect)
+        dis.blit(s3text, s3textRect)
+        dis.blit(sttext, sttextRect)
         dis.blit(autext, autextRect)
     
     if scene == 'BIG SHAPE':
