@@ -76,12 +76,11 @@ def makeShape(shapeArgs):
     img.save(shapeArgs[3])
 
 rnd = random.random
-folder = os.path.dirname(os.path.realpath(__file__)) + '/Assets'
-folder = '"' + folder + '"'
+folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Assets')
 pygame.init()
 def getFont(size):
     global folder
-    return pygame.font.Font(folder + '/font.ttf', size)
+    return pygame.font.Font(os.path.join(folder, 'font.ttf'), size)
 dis = pygame.display.set_mode((1600, 900))
 pygame.display.set_caption('Merge Infinte (OPEN BETA)')
 pygame.display.flip()
