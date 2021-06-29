@@ -2,6 +2,7 @@ import pygame, os, math, random, json
 from PIL import Image, ImageDraw
 from PIL import ImagePath
 
+os.environ['SDL_VIDEO_WINDOW_POS'] = '%d,%d' % (50,50)
 scaling = 1
 
 def sx(x):
@@ -268,7 +269,7 @@ def inittext():
     m2text = getFont(15).render('Middle Click Shape to See in Fullscreen', True, (0,255,255))
     m2textRect = m2text.get_rect()
     m2textRect.center = s(1460, 870)
-    
+
     dis = pygame.display.set_mode((int(1600*scaling), int(900*scaling)))
 
 inittext()
