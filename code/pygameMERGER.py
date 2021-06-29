@@ -379,8 +379,11 @@ while r:
                                 images[path] = pygame.image.load(path)
                                 img = images[path]
                             except:
-                                command = f'--- 450 {m.val+2} {folder}/{int(900*scaling)}_{m.val}.png {rgb2hex((25*(m.val%10+1),(25*(int(m.val/10)%10+1)),(25*(int(m.val/100)%10+1))))} '
-                                makeShape(command.split(' '))
+                                command = f'--- 450 {m.val+2} {folder}/{int(900*scaling)}_{m.val}.png {rgb2hex((25*(m.val%10+1),(25*(int(m.val/10)%10+1)),(25*(int(m.val/100)%10+1))))}'
+                                args = command.split(' ')[:3]
+                                args.append(' '.join(command.split(' ')[3:-1]))
+                                args.append(command.split(' ')[-1])
+                                makeShape(args)
                                 print('[pygameMERGER.py] Command: '+command)
                                 images[path] = pygame.image.load(path)
                                 img = images[path]
@@ -469,8 +472,11 @@ while r:
                                     try:
                                         img = images[path]
                                     except:
-                                        command = f'--- {int(qq/2)} {m.val+2} {folder}/{qq}_{m.val}.png {rgb2hex((25*(m.val%10+1),(25*(int(m.val/10)%10+1)),(25*(int(m.val/100)%10+1))))} '
-                                        makeShape(command.split(' '))
+                                        command = f'--- {int(qq/2)} {m.val+2} {folder}/{qq}_{m.val}.png {rgb2hex((25*(m.val%10+1),(25*(int(m.val/10)%10+1)),(25*(int(m.val/100)%10+1))))}'
+                                        args = command.split(' ')[:3]
+                                        args.append(' '.join(command.split(' ')[3:-1]))
+                                        args.append(command.split(' ')[-1])
+                                        makeShape(args)
                                         print(command)
                                         images[path] = pygame.image.load(path)
                                         img = images[path]
@@ -647,7 +653,10 @@ while r:
                     img = images[path]
                 except:
                     command = f'--- {int(qq/2)} {m.val+2} {folder}/{qq}_{m.val}.png {rgb2hex((25*(m.val%10+1),(25*(int(m.val/10)%10+1)),(25*(int(m.val/100)%10+1))))} '
-                    makeShape(command.split(' '))
+                    args = command.split(' ')[:3]
+                    args.append(' '.join(command.split(' ')[3:-1]))
+                    args.append(command.split(' ')[-1])
+                    makeShape(args)
                     print('[pygameMERGER.py] Command: '+command)
                     images[path] = pygame.image.load(path)
                     img = images[path]
