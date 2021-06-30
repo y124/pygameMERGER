@@ -1,4 +1,4 @@
-iimport pygame, os, math, random, json
+import pygame, os, math, random, json
 from PIL import Image, ImageDraw
 from PIL import ImagePath
 
