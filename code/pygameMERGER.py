@@ -1,4 +1,4 @@
-import pygame, os, math, random, json
+iimport pygame, os, math, random, json
 from PIL import Image, ImageDraw
 from PIL import ImagePath
 
@@ -79,6 +79,7 @@ def shape(side, size):
         img1 = ImageDraw.Draw(img)  
         img1.polygon(xy, fill ="#"+clr+"ff", outline ="#ffffffff") 
 
+prime_list = [2, 3]
 def makeShape(shapeArgs):
     global SIZE, prime_list, img, clr
     prime_list = [2, 3]
@@ -217,6 +218,7 @@ def inittext():
     global sttext, sttextRect
     
     global sctext, sctextRect
+    global btext, btextRect
     
     ftext = getFont(450).render('+', True, (0,255,127), (50,50,50))
     ftextRect = ftext.get_rect()
@@ -225,6 +227,10 @@ def inittext():
     stext = getFont(160).render('sort', True, (0,255,127), (50,50,50))
     stextRect = stext.get_rect()
     stextRect.center = s(1150, 800)
+    
+    btext = getFont(100).render('bin', True, (255,0,0), (50,50,50))
+    btextRect = btext.get_rect()
+    btextRect.center = s(1450, 760)
 
     aftext = getFont(30).render(' Auto Plus Hax ', True, (0,255,127), (50,50,50))
     aftextRect = aftext.get_rect()
@@ -266,7 +272,7 @@ def inittext():
     rtextRect = rtext.get_rect()
     rtextRect.center = s(1520, 400)
 
-    m2text = getFont(15).render('Middle Click Shape to See in Fullscreen', True, (0,255,255))
+    m2text = getFont(15).render('Right Click Shape to See in Fullscreen', True, (0,255,255))
     m2textRect = m2text.get_rect()
     m2textRect.center = s(1460, 870)
 
@@ -275,6 +281,26 @@ def inittext():
 inittext()
 
 clock = pygame.time.Clock()
+
+def gsn(num):
+    global prime_list
+    prime_list = [2, 3]
+    num = int(num)
+    num += 2
+    pfs = sorted(primefactors(int(num)))
+    pfs2 = []
+    for pf in pfs:
+        pfs2.append(prime(pf, prime_list)[0])
+        prime_list = prime(pf, prime_list)[1]
+    name = ''
+    pfs2.reverse()
+    for pf in pfs2:
+        pfas = str(pf)
+        for n in pfas:
+            n = int(n)
+            name += ['ze','uni','doua','tri','quadra','penta','hexa','septa','octa','nona'][n]
+        name += 'gon in\n'
+    return name[:-4] + '*'
 
 while r:
     clock.tick(60)
@@ -289,14 +315,18 @@ while r:
         
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_MINUS:
-                if scaling > 0.25:
-                    scaling -= 0.25
+                if scaling > 0.2:
+                    scaling -= 0.1
                 inittext()
             if event.key == pygame.K_EQUALS:
-                scaling += 0.25
+                scaling += 0.1
                 inittext()
         
         if event.type == pygame.MOUSEBUTTONUP:
+        
+            if scene == 'BIG SHAPE' and event.button == 1:
+                scene = 'MAIN'
+        
             if scene == 'START':
                 if PIR (pygame.mouse.get_pos(), tuple(s2textRect)):
                     try:
@@ -321,6 +351,12 @@ while r:
                     sav = 3
             
             if scene == 'MAIN' and tablet:
+                if PIR (pygame.mouse.get_pos(), tuple(btextRect)):
+                    for m in mergeables:
+                        if m.shown == False:
+                            mergeables.remove(m)
+                            hold = [False]
+                            
                 if pygame.mouse.get_pos()[0] < int(900*scaling):
                     print('[pygameMERGER.py] Click: Board')
                     if event.button == 1:
@@ -362,7 +398,7 @@ while r:
                 save(sav)
             except:
                 None == None
-            if event.button == 2 and scene == 'MAIN' and pygame.mouse.get_pos()[0] < int(900*scaling):
+            if event.button == 3 and scene == 'MAIN' and pygame.mouse.get_pos()[0] < int(900*scaling):
                 try:
                     save(sav)
                 except:
@@ -379,7 +415,7 @@ while r:
                                 images[path] = pygame.image.load(path)
                                 img = images[path]
                             except:
-                                command = f'--- 450 {m.val+2} {folder}/{int(900*scaling)}_{m.val}.png {rgb2hex((25*(m.val%10+1),(25*(int(m.val/10)%10+1)),(25*(int(m.val/100)%10+1))))}'
+                                command = f'--- {int(900*scaling/2)} {m.val+2} {folder}/{int(900*scaling)}_{m.val}.png {rgb2hex((25*(m.val%10+1),(25*(int(m.val/10)%10+1)),(25*(int(m.val/100)%10+1))))}'
                                 args = command.split(' ')[:3]
                                 args.append(' '.join(command.split(' ')[3:-1]))
                                 args.append(command.split(' ')[-1])
@@ -394,11 +430,14 @@ while r:
                         bsv = m.val
                         
             if event.button == 1:
+            
+                if PIR (pygame.mouse.get_pos(), tuple(btextRect)):
+                    for m in mergeables:
+                        if m.shown == False:
+                            mergeables.remove(m)
+                            hold = [False]
                 
                 print('[pygameMERGER.py] Event: Left Click')
-                
-                if scene == 'BIG SHAPE':
-                    scene = 'MAIN'
                 
                 if scene == 'MAIN':
                     if PIR (pygame.mouse.get_pos(), tuple(ftextRect)) and (((int(math.sqrt(mval+1)) + 1)**2) - 1) >= len(mergeables):
@@ -536,23 +575,23 @@ while r:
                 dis.blit(img, textRect)
                 
                 if mode == 'Number':
-                    text = getFont(int(qq*0.35)).render(f'{str(m.val)}', True, (0,0,0))
+                    text = getFont(int((qq/scaling)*0.35)).render(f'{str(m.val)}', True, (0,0,0))
                     textRect = text.get_rect()
                     textRect.center = ((int(900*scaling) // GridSize)*(m.x+0.5), (int(900*scaling) // GridSize)*(m.y+0.5))
                     dis.blit(text, textRect)
                     
-                    text = getFont(int(qq*0.3)).render(f'{str(m.val)}', True, (255, 255, 255))
+                    text = getFont(int((qq/scaling)*0.3)).render(f'{str(m.val)}', True, (255, 255, 255))
                     textRect = text.get_rect()
                     textRect.center = ((int(900*scaling) // GridSize)*(m.x+0.5), (int(900*scaling) // GridSize)*(m.y+0.5))
                     dis.blit(text, textRect)
                     
                 elif mode == 'Letter':
-                    text = getFont(int(qq*0.35)).render(f'{i2b(m.val)}', True, (0,0,0))
+                    text = getFont(int((qq/scaling)*0.35)).render(f'{i2b(m.val)}', True, (0,0,0))
                     textRect = text.get_rect()
                     textRect.center = ((int(900*scaling) // GridSize)*(m.x+0.5), (int(900*scaling) // GridSize)*(m.y+0.5))
                     dis.blit(text, textRect)
                     
-                    text = getFont(int(qq*0.3)).render(f'{i2b(m.val)}', True, (255, 255, 255))
+                    text = getFont(int((qq/scaling)*0.3)).render(f'{i2b(m.val)}', True, (255, 255, 255))
                     textRect = text.get_rect()
                     textRect.center = ((int(900*scaling) // GridSize)*(m.x+0.5), (int(900*scaling) // GridSize)*(m.y+0.5))
                     dis.blit(text, textRect)
@@ -579,9 +618,23 @@ while r:
         mtextRect.center = s(150, 200)
         dis.blit(mtext, mtextRect) 
         
+        fs = 1500/len(gsn(bsv))
+        v2 = 0
+        for v in gsn(bsv).split('\n'):
+            mtext = getFont(fs).render(f'{v}', True, (255,0,255), (50,50,50))
+            mtextRect = mtext.get_rect()
+            mtextRect.center = s(800, (1000/len(gsn(bsv)))+(v2*fs))
+            dis.blit(mtext, mtextRect) 
+            v2+=1
+        
         mtext = getFont(50).render(f'Left Click to Exit', True, (0,64,64))
         mtextRect = mtext.get_rect()
         mtextRect.center = s(1350, 850)
+        dis.blit(mtext, mtextRect) 
+        
+        mtext = getFont(20).render(f'*Shape name may not represent real shape name', True, (64,0,64))
+        mtextRect = mtext.get_rect()
+        mtextRect.center = s(1350, 800)
         dis.blit(mtext, mtextRect) 
               
     if scene == 'MAIN':            
@@ -590,7 +643,8 @@ while r:
         dis.blit(rtext, rtextRect)
         dis.blit(aftext, aftextRect)      
         dis.blit(amtext, amtextRect)      
-        dis.blit(m2text, m2textRect)    
+        dis.blit(m2text, m2textRect)   
+        dis.blit(btext, btextRect)  
         
         mtext = getFont(25).render(f' Overlay Mode: {mode} ', True, (0,255,127), (50,50,50))
         mtextRect = mtext.get_rect()
@@ -665,23 +719,23 @@ while r:
             dis.blit(img, textRect)
             
             if mode == 'Number':
-                text = getFont(int(qq*0.35)).render(f'{str(m.val)}', True, (0,0,0))
+                text = getFont(int((qq/scaling)*0.35)).render(f'{str(m.val)}', True, (0,0,0))
                 textRect = text.get_rect()
                 textRect.center = pygame.mouse.get_pos()
                 dis.blit(text, textRect)
                     
-                text = getFont(int(qq*0.3)).render(f'{str(m.val)}', True, (255, 255, 255))
+                text = getFont(int((qq/scaling)*0.3)).render(f'{str(m.val)}', True, (255, 255, 255))
                 textRect = text.get_rect()
                 textRect.center = pygame.mouse.get_pos()
                 dis.blit(text, textRect)
                 
             elif mode == 'Letter':
-                text = getFont(int(qq*0.35)).render(f'{i2b(m.val)}', True, (0,0,0))
+                text = getFont(int((qq/scaling)*0.35)).render(f'{i2b(m.val)}', True, (0,0,0))
                 textRect = text.get_rect()
                 textRect.center = pygame.mouse.get_pos()
                 dis.blit(text, textRect)
                     
-                text = getFont(int(qq*0.3)).render(f'{i2b(m.val)}', True, (255, 255, 255))
+                text = getFont(int((qq/scaling)*0.3)).render(f'{i2b(m.val)}', True, (255, 255, 255))
                 textRect = text.get_rect()
                 textRect.center = pygame.mouse.get_pos()
                 dis.blit(text, textRect)
